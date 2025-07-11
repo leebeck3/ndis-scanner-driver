@@ -1,0 +1,65 @@
+[Version]
+Signature           = "$Windows NT$"
+Class               = NetService
+ClassGuid           = {4D36E974-E325-11CE-BFC1-08002BE10318}
+Provider            = %ManufacturerName%
+DriverVer           = 07/11/2025,1.0.0.0
+CatalogFile         = NDIS_Scanner_Driver.cat
+PnpLockdown			= 1
+
+[Manufacturer]
+%ManufacturerName%  = ExampleFilter,NTx86,NTamd64
+
+[ExampleFilter.NTx86]
+%ExampleFilter_Desc% = Install, MS_NdisLwf_Example
+
+[ExampleFilter.NTamd64]
+%ExampleFilter_Desc% = Install, MS_NdisLwf_Example
+
+[Install]
+Characteristics = 0x40000  ; NCF_LW_FILTER
+AddReg          = Common.AddReg
+CopyFiles       = Driver.CopyFiles
+
+[Install.Services]
+AddService = NDIS_Scanner, 2, Service, EventLog
+
+[Service]
+DisplayName    = %ServiceDisplayName%
+ServiceType    = 1 ; SERVICE_KERNEL_DRIVER
+StartType      = 3 ; SERVICE_DEMAND_START
+ErrorControl   = 1
+ServiceBinary  = %12%\NDIS_Scanner_Driver.sys
+LoadOrderGroup = NDIS
+
+[EventLog]
+AddReg = EventLog.AddReg
+
+[EventLog.AddReg]
+HKR, , EventMessageFile, 0x00020000, %%SystemRoot%%\System32\IoLogMsg.dll
+HKR, , TypesSupported,   0x00010001, 7
+
+[Common.AddReg]
+HKR, Ndi,                         Service,           0, "ExampleFilterService"
+HKR, Ndi\Interfaces,             UpperRange,        0, "noupper"
+HKR, Ndi\Interfaces,             LowerRange,        0, "ethernet"
+HKR, Ndi\Interfaces,             FilterMediaTypes,  0, "ethernet"
+
+[Driver.CopyFiles]
+NDIS_Scanner_Driver.sys
+
+[SourceDisksNames]
+1 = %DiskName%,,,
+
+[SourceDisksFiles]
+NDIS_Scanner_Driver.sys = 1
+
+[DestinationDirs]
+DefaultDestDir     = 12
+Driver.CopyFiles   = 12
+
+[Strings]
+ManufacturerName     = "Your Company"
+ExampleFilter_Desc   = "Example NDIS Lightweight Filter Driver"
+ServiceDisplayName   = "Example Filter Driver"
+DiskName             = "Example Filter Installation Disk"
